@@ -129,7 +129,7 @@ class SsvepAnalyzer:
     
     def plot_coefficient_matrix(self, coefficient_matrix):
         """
-        Plots coefficient matrix.
+        Plots heatmap of the coefficient matrix.
         """
         plt.figure(figsize=figsize)
         
@@ -142,9 +142,9 @@ class SsvepAnalyzer:
         plt.show()
         return ax
 
-    def compute_r_values(self, eeg_data, marker=None, n_components=1, n_harmonics=2, window_duration=2, step_size=40):
+    def compute_running_r_values(self, eeg_data, marker=None, n_components=1, n_harmonics=2, window_duration=2, step_size=40):
         """
-        Computes r values of each window for a CCA between EEG data and reference signals.
+        Computes running r values of each window for a CCA between EEG data and reference signals.
         """
         N_samples = eeg_data.shape[0]
         window_size = window_duration * self.sampling_rate
@@ -171,9 +171,9 @@ class SsvepAnalyzer:
             return r_values, times, marker_values
         return r_values, times
     
-    def plot_r_values(self, r_values, times, marker_values=None, step_size = 40):
+    def plot_r_values(self, r_values, times, marker_values=None):
         """
-        Plots r values.
+        Plots r values of the running CCA.
         """
         color_map = self._initialize_color_map(marker_values) if marker_values else {}
         colors = [color_map[marker] for marker in marker_values] if marker_values else 'black'
@@ -204,7 +204,7 @@ class SsvepAnalyzer:
     
     def compute_wavelet_transform(self, eeg_data, w=50, frequency_range=(1, 30), frequency_step=0.5, time_step=0.3):
         """
-        Computes wavelet transform for 1d EEG data.
+        Computes wavelet transform for 1d EEG data using the Morlet wavelet.
         """
         frequencies = np.arange(*frequency_range, frequency_step)
         w = 50
@@ -220,7 +220,7 @@ class SsvepAnalyzer:
     
     def plot_wavelet_transform(self, frequencies, times, cwt_matrix):
         """
-        Plots wavelet transform.	
+        Plots heatmap of the wavelet transform.	
         """
         df = pd.DataFrame(cwt_matrix, index=frequencies.round(2), columns=times.round(2))
 
