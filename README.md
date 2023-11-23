@@ -104,9 +104,9 @@ Plots a heatmap of the coefficient matrix.
 #### Returns
 - matplotlib figure
 
-`compute_r_values(eeg_data, marker=None, n_components=1, n_harmonics=2, window_duration=2, step_size=40)`
+`compute_running_r_values(eeg_data, marker=None, n_components=1, n_harmonics=2, window_duration=2, step_size=40)`
 
-Computes correlation values (r values) for EEG data.
+Computes correlation values (r values) of a CCA per window between EEG data and a reference signal with n_harmonics harmonics of the stimulus frequency.
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - marker: Optional marker data to annotate segments (default None).
@@ -119,14 +119,13 @@ Computes correlation values (r values) for EEG data.
 - A 1D numpy array of times.
 - If marker is not None, a 1D numpy array of marker values.
 
-`plot_r_values(r_values, marker_values=None, step_size=40)`
+`plot_r_values(r_values, marker_values=None)`
 
 Plots r values over time.
 #### Parameters
 - r_values: The r values to plot.
 - times: The times corresponding to the r values.
 - marker_values: Optional marker data for coloring (default None).
-- step_size: The step size for windowing (default 40 samples).
 #### Returns
 - matplotlib figure
 
