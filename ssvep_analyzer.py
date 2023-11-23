@@ -106,7 +106,7 @@ class SsvepAnalyzer:
         """
         cca, _ = self.compute_cca(eeg_data, n_components, n_harmonics)
         reduced_signal = cca.transform(eeg_data).flatten()
-        return reduced_signal, cca.coef_.T
+        return reduced_signal, cca.coef_
     
     def compute_power_spectrum(self, eeg_data):
         """
