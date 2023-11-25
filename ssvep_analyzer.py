@@ -202,17 +202,17 @@ class SsvepAnalyzer:
         cmap = plt.cm.get_cmap('brg', len(unique_markers))
         return {marker: mcolors.rgb2hex(cmap(i)) for i, marker in enumerate(unique_markers)}
     
-    def compute_wavelet_transform(self, eeg_data, w=50, frequency_range=(1, 30), frequency_step=0.5, time_step=0.3):
+    def compute_wavelet_transform(self, eeg_data, w=50, frequency_range=(0, 35), n_frequencies=100, n_times=100):
         """
         Computes wavelet transform for 1d EEG data using the Morlet wavelet.
         """
-        frequencies = np.arange(*frequency_range, frequency_step)
+        frequencies = np.linspace(*frequency_range, n_frequencies)
         w = 50
-        widths = w*self.sampling_rate / (2*np.pi*frequencies)
+        widths = w*self.sampling_rate / (2*np.pi*frequencies + 1e-9)
 
         cwt_matrix = np.abs(cwt(eeg_data, morlet2, widths=widths, w=w))
 
-        idx_mask = np.round(np.arange(0, cwt_matrix.shape[1] - 1, self.sampling_rate * time_step)).astype(int)
+        idx_mask = cwt_matrix.shape[1] // n_times * np.arange(n_times)
         cwt_matrix = cwt_matrix[:, idx_mask]
 
         times = idx_mask / self.sampling_rate

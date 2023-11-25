@@ -129,15 +129,15 @@ Plots r values over time.
 #### Returns
 - matplotlib figure
 
-`compute_wavelet_transform(eeg_data, w=50, frequency_range=(1, 30), frequency_step=0.5, time_step=0.3)`
+`compute_wavelet_transform(eeg_data, w=50, frequency_range=(1, 35), n_frequencies=100, n_times=100)`
 
 Computes the wavelet transform for EEG data.
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - w: The parameter w for the Morlet wavelet (default 50).
 - frequency_range: A tuple representing the frequency range (default (1, 30) Hz).
-- frequency_step: The step between frequencies (default 0.5 Hz).
-- time_step: The step between times (default 0.3 seconds).
+- n_frequencies: The number of frequencies to compute (default 100).
+- n_times: The number of times to compute (default 100).
 #### Returns
 - A 1D numpy array of frequencies.
 - A 1D numpy array of times.
