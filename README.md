@@ -11,25 +11,26 @@ analyzer = SsvepAnalyzer(eeg_data, sampling_rate=250, stimulus_frequency=10)
 ```
 
 ## Methods
-`plot_eeg(eeg_data)`
-
-Plots EEG data channels on separate rows.
+```python
+plot_eeg(eeg_data)
+```
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 #### Returns
 - matplotlib figure
 
-`apply_linear_detrending(eeg_data)`
 
-Applies linear detrending to the EEG data.
+```python
+apply_linear_detrending(eeg_data)
+```
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 #### Returns
 - A 2D numpy array with shape (samples, channels).
 
-`apply_lowpass_filter(eeg_data, cutoff=100, filter_order=5)`
-
-Applies a lowpass filter.
+```python
+apply_lowpass_filter(eeg_data, cutoff=100, filter_order=5)
+```
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - cutoff: The cutoff frequency (default 100 Hz).
@@ -37,9 +38,9 @@ Applies a lowpass filter.
 #### Returns
 - A 2D numpy array with shape (samples, channels).
 
-`apply_highpass_filter(eeg_data, cutoff=1, filter_order=5)`
-
-Applies a highpass filter.
+```python
+apply_highpass_filter(eeg_data, cutoff=1, filter_order=5)
+```
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - cutoff: The cutoff frequency (default 1 Hz).
@@ -47,9 +48,9 @@ Applies a highpass filter.
 #### Returns
 - A 2D numpy array with shape (samples, channels).
 
-`apply_notch_filter(eeg_data, notch_freq=50, bandwidth=1, filter_order=5)`
-
-Applies a notch filter to remove specific frequency components.
+```python
+apply_notch_filter(eeg_data, notch_freq=50, bandwidth=1, filter_order=5)
+```
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - notch_freq: The central frequency to remove (default 50 Hz).
@@ -58,9 +59,10 @@ Applies a notch filter to remove specific frequency components.
 #### Returns
 - A 2D numpy array with shape (samples, channels).
 
-`compute_cca(eeg_data, n_components=1, n_harmonics=2)`
-
-Computes Canonical Correlation Analysis between EEG data and reference signals.
+```python
+compute_cca(eeg_data, n_components=1, n_harmonics=2)
+```
+Computes Canonical Correlation Analysis between the EEG data and a generated reference signal.
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - n_components: Number of components to keep (default 1).
@@ -68,7 +70,9 @@ Computes Canonical Correlation Analysis between EEG data and reference signals.
 #### Returns
 - The fitted cca model and the reference signals.
 
-`compute_reduced_signal(eeg_data, n_components=1, n_harmonics=2)`
+```python
+compute_reduced_signal(eeg_data, n_components=1, n_harmonics=2)
+```
 
 Reduces the dimensionality of the EEG data using CCA.
 #### Parameters
@@ -78,35 +82,36 @@ Reduces the dimensionality of the EEG data using CCA.
 #### Returns
 - A 2D numpy array with shape (samples, n_components).
 
-`compute_power_spectrum(eeg_data)`
-
-Computes the Fourier Transform of the EEG data.
+```python
+compute_power_spectrum(eeg_data)
+```
 #### Parameters
 - eeg_data: A 1D numpy array of EEG data samples.
 #### Returns
 - A 1D numpy array of frequencies
 - A 1D numpy array of the power spectrum.
 
-`plot_power_spectrum(frequencies, spectra)`
-
-Plots the power spectrum of frequencies and their corresponding amplitudes.
+```python
+plot_power_spectrum(frequencies, spectrum)
+```
 #### Parameters
 - frequencies: Frequencies of the power spectrum.
-- spectra: Amplitudes of the power spectrum.
+- spectrum: Amplitudes of the power spectrum.
 #### Returns
 - matplotlib figure
 
-`plot_coefficient_matrix(coefficient_matrix)`
-
-Plots a heatmap of the coefficient matrix.
+```python
+plot_coefficient_matrix(coefficient_matrix)
+```
 #### Parameters
 - coefficient_matrix: A 2D numpy array representing the coefficient matrix.
 #### Returns
 - matplotlib figure
 
-`compute_running_r_values(eeg_data, marker=None, n_components=1, n_harmonics=2, window_duration=2, step_size=40)`
-
-Computes correlation values (r values) of a CCA per window between EEG data and a reference signal with n_harmonics harmonics of the stimulus frequency.
+```python
+compute_running_r_values(eeg_data, marker=None, n_components=1, n_harmonics=2, window_duration=2, step_size=40)
+```
+Computes r values of a CCA per window between EEG data and a reference signal with n_harmonics harmonics of the stimulus frequency.
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - marker: Optional marker data to annotate segments (default None).
@@ -119,9 +124,9 @@ Computes correlation values (r values) of a CCA per window between EEG data and 
 - A 1D numpy array of times.
 - If marker is not None, a 1D numpy array of marker values.
 
-`plot_r_values(r_values, marker_values=None)`
-
-Plots r values over time.
+```python
+plot_r_values(r_values, marker_values=None)
+```
 #### Parameters
 - r_values: The r values to plot.
 - times: The times corresponding to the r values.
@@ -129,9 +134,11 @@ Plots r values over time.
 #### Returns
 - matplotlib figure
 
-`compute_wavelet_transform(eeg_data, w=50, frequency_range=(1, 35), n_frequencies=100, n_times=100)`
+```python
+compute_wavelet_transform(eeg_data, w=50, frequency_range=(1, 35), n_frequencies=100, n_times=100)
+```
 
-Computes the wavelet transform for EEG data.
+Computes the wavelet transform for EEG data using a Morelet wavelet with parameter w.
 #### Parameters
 - eeg_data: A 2D numpy array with shape (samples, channels).
 - w: The parameter w for the Morlet wavelet (default 50).
@@ -143,9 +150,9 @@ Computes the wavelet transform for EEG data.
 - A 1D numpy array of times.
 - A 2D numpy array of wavelet coefficients.
 
-`plot_wavelet_transform(frequencies, times, cwt_matrix)`
-
-Plots the wavelet transform as a heatmap.
+```python
+plot_wavelet_transform(frequencies, times, cwt_matrix)
+```
 #### Parameters
 - frequencies: Frequencies corresponding to the wavelet coefficients.
 - times: Times corresponding to the wavelet coefficients.
