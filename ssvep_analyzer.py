@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
 import seaborn as sns
 from scipy.signal import butter, lfilter, cwt, morlet2
 from sklearn.cross_decomposition import CCA
@@ -99,7 +98,7 @@ class SsvepAnalyzer:
     
     def plot_coefficient_matrix(self, coefficient_matrix):
         plt.figure(figsize=figsize)
-        ax = sns.heatmap(coefficient_matrix, cmap='gray', center=0)
+        ax = sns.heatmap(coefficient_matrix, cmap='binary')
         ax.set_xticklabels([f'{i}' for i in range(coefficient_matrix.shape[1])])
         ax.set_yticklabels([f'$\sin ({i//2+1}\omega)$' if i%2==0 else f'$\cos ({i//2+1}\omega)$' for i in range(coefficient_matrix.shape[0])])
         plt.xlabel('Channel')
@@ -167,7 +166,7 @@ class SsvepAnalyzer:
         frequencies = np.linspace(*frequency_range, n_frequencies)
         widths = w*self.sampling_rate / (2*np.pi*frequencies + 1e-9)
 
-        cwt_matrix = np.abs(cwt(eeg_data, morlet2, widths=widths, w=w, dtype='complex128'))
+        cwt_matrix = cwt(eeg_data, morlet2, widths=widths, w=w, dtype='complex128')
 
         idx_mask = cwt_matrix.shape[1] // n_times * np.arange(n_times)
         cwt_matrix = cwt_matrix[:, idx_mask]
