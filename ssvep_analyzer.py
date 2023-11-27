@@ -91,7 +91,7 @@ class SsvepAnalyzer:
     
     def plot_power_spectrum(self, frequencies, spectrum):
         plt.figure(figsize=figsize)
-        plt.plot(frequencies, spectrum)
+        plt.plot(frequencies, spectrum, color='black')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Amplitude')
         plt.show()
@@ -99,7 +99,7 @@ class SsvepAnalyzer:
     
     def plot_coefficient_matrix(self, coefficient_matrix):
         plt.figure(figsize=figsize)
-        ax = sns.heatmap(coefficient_matrix, cmap='coolwarm', center=0)
+        ax = sns.heatmap(coefficient_matrix, cmap='gray', center=0)
         ax.set_xticklabels([f'{i}' for i in range(coefficient_matrix.shape[1])])
         ax.set_yticklabels([f'$\sin ({i//2+1}\omega)$' if i%2==0 else f'$\cos ({i//2+1}\omega)$' for i in range(coefficient_matrix.shape[0])])
         plt.xlabel('Channel')
@@ -135,37 +135,39 @@ class SsvepAnalyzer:
         return r_values, times
     
     def plot_r_values(self, r_values, times, marker_values=None):
-        color_map = self._initialize_color_map(marker_values) if marker_values else {}
-        colors = [color_map[marker] for marker in marker_values] if marker_values else 'black'
+        marker_map = self._initialize_marker_map(marker_values)
 
-        plt.figure(figsize=figsize)
-        plt.scatter(times, r_values, c=colors, s=15)
+        plt.figure(figsize=(10, 6))
+        for r_value, time, marker in zip(r_values, times, marker_values):
+            plt.scatter(time, r_value, marker=marker_map[marker], s=30, color='black')
         
         # Adding a legend for each unique marker
         if marker_values:
-            handles = [plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=10) 
-                        for color in color_map.values()]
-            labels = [marker for marker in color_map.keys()]
+            handles = [plt.Line2D([0], [0], marker=marker, color='black', markersize=8) 
+                        for marker in marker_map.values()]
+            labels = [marker for marker in marker_map.keys()]
             plt.legend(handles, labels, loc='upper right')
         
         plt.xlabel("Time (s)")
         plt.ylabel("r-Value")
         plt.show()
-        return plt
     
-    def _initialize_color_map(self, marker):
-        unique_markers = np.unique(marker)
-        cmap = plt.cm.get_cmap('brg', len(unique_markers))
-        return {marker: mcolors.rgb2hex(cmap(i)) for i, marker in enumerate(unique_markers)}
+    def _initialize_marker_map(self, marker_values):
+        unique_markers = np.unique(marker_values)
+        markers = ['o', 'x', '^', 's', '+', 'v', 'D', '*', '<', 'p', '>']
+        if len(unique_markers) > len(markers):
+            raise ValueError("Not enough marker shapes to assign to unique markers.")
+        return {marker_value: markers[i] for i, marker_value in enumerate(unique_markers)}
+
     
-    def compute_wavelet_transform(self, eeg_data, w=50, frequency_range=(0, 35), n_frequencies=100, n_times=100):
+    def compute_wavelet_transform(self, eeg_data, w=50, frequency_range=(0, 35), n_frequencies=300, n_times=300):
         """
         Computes wavelet transform for 1D EEG data using the Morlet wavelet with parameter w.
         """
         frequencies = np.linspace(*frequency_range, n_frequencies)
         widths = w*self.sampling_rate / (2*np.pi*frequencies + 1e-9)
 
-        cwt_matrix = np.abs(cwt(eeg_data, morlet2, widths=widths, w=w))
+        cwt_matrix = np.abs(cwt(eeg_data, morlet2, widths=widths, w=w, dtype='complex128'))
 
         idx_mask = cwt_matrix.shape[1] // n_times * np.arange(n_times)
         cwt_matrix = cwt_matrix[:, idx_mask]
@@ -176,7 +178,7 @@ class SsvepAnalyzer:
     def plot_wavelet_transform(self, frequencies, times, cwt_matrix):
         df = pd.DataFrame(cwt_matrix, index=frequencies.round(2), columns=times.round(2))
         plt.figure(figsize=figsize)
-        ax = sns.heatmap(df)
+        ax = sns.heatmap(df, cmap='binary', xticklabels=10, yticklabels=10)
         ax.set_xlabel('Time (s)')
         ax.set_ylabel('Frequency (Hz)')
         plt.show()
