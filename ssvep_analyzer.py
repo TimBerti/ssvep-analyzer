@@ -38,20 +38,25 @@ class SsvepAnalyzer:
         plt.show()
         return ax
     
+    def filter_extreme_values(self, eeg_data, threshold_factor=2, centering=np.mean):
+        eeg_data = eeg_data - centering(eeg_data, axis=0)
+        threshold = threshold_factor * np.std(eeg_data, axis=0)
+        return np.where(np.abs(eeg_data) > threshold, 0, eeg_data)
+    
     def apply_linear_detrending(self, eeg_data):
         return np.apply_along_axis(lambda x: x - np.polyval(np.polyfit(np.arange(len(x)), x, 1), np.arange(len(x))), 0, eeg_data)
 
-    def apply_lowpass_filter(self, eeg_data, cutoff=100, filter_order=5):
+    def apply_lowpass_filter(self, eeg_data, cutoff=35, filter_order=5):
         normalized_cutoff = cutoff / self.nyquist_frequency
         b, a = butter(filter_order, normalized_cutoff, btype='low')
         return np.apply_along_axis(lambda x: lfilter(b, a, x), 0, eeg_data)
 
-    def apply_highpass_filter(self, eeg_data, cutoff=1, filter_order=5):
+    def apply_highpass_filter(self, eeg_data, cutoff=0.1, filter_order=5):
         normalized_cutoff = cutoff / self.nyquist_frequency
         b, a = butter(filter_order, normalized_cutoff, btype='high')
         return np.apply_along_axis(lambda x: lfilter(b, a, x), 0, eeg_data)
 
-    def apply_notch_filter(self, eeg_data, notch_freq=50, bandwidth=1, filter_order=5):
+    def apply_notch_filter(self, eeg_data, notch_freq=50, bandwidth=3, filter_order=5):
         low = (notch_freq - bandwidth/2) / self.nyquist_frequency
         high = (notch_freq + bandwidth/2) / self.nyquist_frequency
         b, a = butter(filter_order, [low, high], btype='bandstop')
@@ -159,11 +164,10 @@ class SsvepAnalyzer:
         return {marker_value: markers[i] for i, marker_value in enumerate(unique_markers)}
 
     
-    def compute_wavelet_transform(self, eeg_data, w=50, frequency_range=(0, 35), n_frequencies=300, n_times=300):
+    def compute_wavelet_transform(self, eeg_data, w=50, frequencies = np.linspace(0, 35, 300), n_times=300):
         """
         Computes wavelet transform for 1D EEG data using the Morlet wavelet with parameter w.
         """
-        frequencies = np.linspace(*frequency_range, n_frequencies)
         widths = w*self.sampling_rate / (2*np.pi*frequencies + 1e-9)
 
         cwt_matrix = cwt(eeg_data, morlet2, widths=widths, w=w, dtype='complex128')
