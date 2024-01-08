@@ -38,7 +38,7 @@ class SsvepAnalyzer:
         plt.show()
         return ax
     
-    def filter_extreme_values(self, eeg_data, threshold_factor=2, centering=np.mean):
+    def filter_extreme_values(self, eeg_data, threshold_factor=3, centering=np.mean):
         eeg_data = eeg_data - centering(eeg_data, axis=0)
         threshold = threshold_factor * np.std(eeg_data, axis=0)
         return np.where(np.abs(eeg_data) > threshold, 0, eeg_data)
