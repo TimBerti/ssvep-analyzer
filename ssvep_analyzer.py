@@ -51,7 +51,7 @@ class SsvepAnalyzer:
         b, a = butter(filter_order, normalized_cutoff, btype='low')
         return np.apply_along_axis(lambda x: lfilter(b, a, x), 0, eeg_data)
 
-    def apply_highpass_filter(self, eeg_data, cutoff=0.1, filter_order=5):
+    def apply_highpass_filter(self, eeg_data, cutoff=1, filter_order=5):
         normalized_cutoff = cutoff / self.nyquist_frequency
         b, a = butter(filter_order, normalized_cutoff, btype='high')
         return np.apply_along_axis(lambda x: lfilter(b, a, x), 0, eeg_data)
@@ -87,6 +87,15 @@ class SsvepAnalyzer:
         cca, _ = self.compute_cca(eeg_data, n_components, n_harmonics)
         reduced_signal = cca.transform(eeg_data).flatten()
         return reduced_signal, cca.coef_
+    
+    def find_highest_correlator(self, eeg_data, n_components=1, n_harmonics=2):
+        """
+        Finds the channel with the highest correlation with the reference signal.
+        """
+        cca, _ = self.compute_cca(eeg_data, n_components, n_harmonics)
+        coefficient_matrix = cca.coef_
+        channel = np.argmax(np.linalg.norm(coefficient_matrix, axis=0))
+        return eeg_data[:,channel], channel
     
     def compute_power_spectrum(self, eeg_data):
         spectrum = np.abs(np.fft.rfft(eeg_data, axis=0))
